@@ -87,6 +87,8 @@ class QueryHandlers:
         name = 'f_voltage'
       data_type = device.get_property_type(name)
       value = data_type(update['data']['value'])
+      if name == 'display_temperature':  # Convert FGL display temperature to degrees (Celsius?)
+        value = data_type(round((value-5000)/50)/2)
       device.update_property(name, value)
     except Exception as ex:
       logging.error('Failed to handle {}. Exception = {}'.format(update, ex))

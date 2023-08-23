@@ -543,6 +543,7 @@ class FglDevice(Device):
   def __init__(self, config: Dict[str, str], notifier: Callable[[None], None]):
     super().__init__(config, FglProperties(), notifier)
     self.topics = {
+        'env_temp': 'display_temperature',
         'fan_speed': 'fan_speed',
         'work_mode': 'operation_mode',
         'swing_mode': 'af_vertical_swing',
@@ -557,6 +558,7 @@ class FglBDevice(Device):
   def __init__(self, config: Dict[str, str], notifier: Callable[[None], None]):
     super().__init__(config, FglBProperties(), notifier)
     self.topics = {
+        'env_temp': 'display_temperature',
         'fan_speed': 'fan_speed',
         'work_mode': 'operation_mode',
         'temp': 'adjust_temperature'

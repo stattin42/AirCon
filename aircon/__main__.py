@@ -221,7 +221,7 @@ async def run(parsed_args):
                   'topic': mqtt_topics['pub'].format(device.mac_address, 'available')
               },
           ],
-          'precision': 1.0,
+          'precision': 0.5,
           'temperature_unit': 'F' if device.is_fahrenheit else 'C'
       }
       topics = device.topics
