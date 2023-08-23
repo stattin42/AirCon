@@ -169,15 +169,15 @@ class Device(object):
       self._convert_to_control_value(name, data_value)
       return
 
+    # Update value precision for value to be sent to the A/C (before setting typed_value)
+    precision = self._properties.get_precision(name)
+    if precision != 1:
+      data_value = round(data_value / precision)
+
     typed_value = data_value
     if issubclass(data_type, enum.Enum):
       data_value = data_value.value
       typed_value = data_type[value]
-
-    # Update value precision for value to be sent to the A/C
-    precision = self._properties.get_precision(name)
-    if precision != 1:
-      data_value = round(data_value / precision)
 
     command = self._build_command(name, data_value)
     # There are (usually) no acks on commands, so also queue an update to the
