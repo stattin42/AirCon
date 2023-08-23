@@ -79,6 +79,9 @@ def ParseArguments() -> argparse.Namespace:
   group_mqtt = parser_run.add_argument_group('MQTT', 'Settings related to the MQTT')
   group_mqtt.add_argument('--mqtt_host', default=None, help='MQTT broker hostname or IP address.')
   group_mqtt.add_argument('--mqtt_port', type=int, default=1883, help='MQTT broker port.')
+  group_mqtt.add_argument('--mqtt_tls', action='store_true', help='Use MQTT TLS.')
+  group_mqtt.add_argument('--mqtt_tls_broker_cert', default=None, help='Path to MQTT broker certificate chain.')
+  group_mqtt.add_argument('--mqtt_tls_insecure', action='store_true', help='Ignore MQTT broker certificate validation.')
   group_mqtt.add_argument('--mqtt_client_id', default=None, help='MQTT client ID.')
   group_mqtt.add_argument('--mqtt_user', default=None, help='<user:password> for the MQTT channel.')
   group_mqtt.add_argument('--mqtt_topic', default='hisense_ac', help='MQTT topic.')
@@ -190,6 +193,14 @@ async def run(parsed_args):
     if parsed_args.mqtt_user:
       mqtt_client.username_pw_set(*parsed_args.mqtt_user.split(':', 1))
     mqtt_client.will_set(mqtt_topics['lwt'], payload='offline', retain=True)
+
+    # Setup (insecure) TLS
+    if parsed_args.mqtt_tls:
+      mqtt_client.tls_set(parsed_args.mqtt_tls_broker_cert)
+      if parsed_args.mqtt_tls_insecure:
+        mqtt_client.tls_insecure_set(True)
+
+    # Connect to broker
     mqtt_client.connect(parsed_args.mqtt_host, parsed_args.mqtt_port)
     mqtt_client.publish(mqtt_topics['lwt'], payload='online', retain=True)
     for device in devices:
